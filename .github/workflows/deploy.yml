@@ -52,9 +52,13 @@ jobs:
           ECR_REPOSITORY: rainfall-repository
           IMAGE_TAG: latest
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f ./main_website/Dockerfile .
+          echo "$(pwd)"
+          echo "$(ls -l)"
+          cd ./main_website
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+          cd ..
 
       - name: Download task definition
         run: |
