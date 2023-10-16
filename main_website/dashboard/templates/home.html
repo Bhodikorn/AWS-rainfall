@@ -13,9 +13,9 @@
       </button>
       <div class="collapse" id="home-collapse">
         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-          <li><a href="#" class="link-dark rounded">IMERG</a></li>
-          <li><a href="#" class="link-dark rounded">GSMaP</a></li>
-          <li><a href="#" class="link-dark rounded">PERSIANN</a></li>
+          <li><a href="#" class="link-dark rounded">Calibration Model v1</a></li>
+          <li><a href="#" class="link-dark rounded">Calibration Model v2</a></li>
+          <li><a href="#" class="link-dark rounded">Calibration Model v3</a></li>
         </ul>
       </div>
     </li>
@@ -47,9 +47,9 @@
         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
           <form action="" class="form">
             <label for="latitude">Latitude:</label>
-            <input type="text" id="latitude" placeholder="Latitude">
+            <input type="text" id="latitude" class="form-control form-control-sm" placeholder="Latitude">
             <label for="latitude">Longitude:</label>
-            <input type="text" id="longitude" placeholder="Longitude">
+            <input type="text" id="longitude" class="form-control form-control-sm" placeholder="Longitude">
           </form>
         </ul>
       </div>
@@ -74,7 +74,8 @@
 
   // var imageUrl = '../test.tif'
   // var geoJsonLayer = L.geoJSON(imageUrl).addTo(map);
-  
+  // APICHON
+
   let marker = null;
   map.on('click', (event)=> {
 
@@ -84,8 +85,8 @@
 
     marker = L.marker([event.latlng.lat , event.latlng.lng]).addTo(map);
 
-    console.log("Latitude: " + (document.getElementById('latitude').value = marker._latlng.lat));
-    console.log("Longtitude: " + (document.getElementById('longitude').value = marker._latlng.lng));
+    console.log("Latitude: " + (document.getElementById('latitude').value = marker._latlng.lat.toFixed(5)));
+    console.log("Longtitude: " + (document.getElementById('longitude').value = marker._latlng.lng.toFixed(5)));
     
 })
 </script>
