@@ -34,6 +34,26 @@
         </ul>
       </div>
     </li>
+    <li class="mb-1">
+      <button
+        class="btn btn-toggle align-items-center rounded collapsed"
+        data-bs-toggle="collapse"
+        data-bs-target="#location-collapse"
+        aria-expanded="false"
+      >
+        Selected Location
+      </button>
+      <div class="collapse" id="location-collapse">
+        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+          <form action="" class="form">
+            <label for="latitude">Latitude:</label>
+            <input type="text" id="latitude" placeholder="Latitude">
+            <label for="latitude">Longitude:</label>
+            <input type="text" id="longitude" placeholder="Longitude">
+          </form>
+        </ul>
+      </div>
+    </li>
   </ul>
 </div>
 
@@ -47,5 +67,26 @@
     attribution:
       '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
   }).addTo(map);
+
+  // var imageUrl = '../weekly_rain.asc',
+  //   imageBounds = [[5.4,20.6], [97.1,106.0]];
+  // L.imageOverlay(imageUrl, imageBounds).addTo(map);
+
+  // var imageUrl = '../test.tif'
+  // var geoJsonLayer = L.geoJSON(imageUrl).addTo(map);
+  
+  let marker = null;
+  map.on('click', (event)=> {
+
+    if(marker !== null){
+        map.removeLayer(marker);
+    }
+
+    marker = L.marker([event.latlng.lat , event.latlng.lng]).addTo(map);
+
+    console.log("Latitude: " + (document.getElementById('latitude').value = marker._latlng.lat));
+    console.log("Longtitude: " + (document.getElementById('longitude').value = marker._latlng.lng));
+    
+})
 </script>
 {% endblock %}
