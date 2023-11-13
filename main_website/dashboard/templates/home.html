@@ -1,6 +1,9 @@
 {% extends "base.html" %} {% block content %}
 
-<div class="side-menu flex-shrink-0 p-3 bg-white" style="height: 92.3%; width: 16%; float: left;">
+<div
+  class="side-menu flex-shrink-0 p-3 bg-white"
+  style="height: 92.3%; width: 16%; float: left"
+>
   <ul class="list-unstyled ps-0">
     <li class="mb-1">
       <button
@@ -13,9 +16,15 @@
       </button>
       <div class="collapse" id="home-collapse">
         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-          <li><a href="#" class="link-dark rounded">Calibration Model v1</a></li>
-          <li><a href="#" class="link-dark rounded">Calibration Model v2</a></li>
-          <li><a href="#" class="link-dark rounded">Calibration Model v3</a></li>
+          <li>
+            <a href="#" class="link-dark rounded">Calibration Model v1</a>
+          </li>
+          <li>
+            <a href="#" class="link-dark rounded">Calibration Model v2</a>
+          </li>
+          <li>
+            <a href="#" class="link-dark rounded">Calibration Model v3</a>
+          </li>
         </ul>
       </div>
     </li>
@@ -30,7 +39,11 @@
       </button>
       <div class="collapse" id="dashboard-collapse">
         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-          <input type="text" class="form-control form-control-sm mt-2" placeholder="Date">
+          <input
+            type="text"
+            class="form-control form-control-sm mt-2"
+            placeholder="Date"
+          />
         </ul>
       </div>
     </li>
@@ -47,9 +60,19 @@
         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
           <form action="" class="form">
             <label for="latitude">Latitude:</label>
-            <input type="text" id="latitude" class="form-control form-control-sm" placeholder="Latitude">
+            <input
+              type="text"
+              id="latitude"
+              class="form-control form-control-sm"
+              placeholder="Latitude"
+            />
             <label for="latitude">Longitude:</label>
-            <input type="text" id="longitude" class="form-control form-control-sm" placeholder="Longitude">
+            <input
+              type="text"
+              id="longitude"
+              class="form-control form-control-sm"
+              placeholder="Longitude"
+            />
           </form>
         </ul>
       </div>
@@ -57,17 +80,55 @@
   </ul>
 </div>
 
-<div id="map" style="height: 92.3%; width: 84%;"></div>
+<div id="map" style="height: 92.3%; width: 84%"></div>
 
 <script>
-  var map = L.map("map").setView([13.72438, 101], 6);
-
-  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    maxZoom: 19,
+  var osm = L.tileLayer("http://{s}.tile.osm.org/{z}/{x}/{y}.png", {
     attribution:
-      '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-  }).addTo(map);
+      '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+    minZoom: 0,
+    maxZoom: 10,
+  });
 
+  // Overlay layers
+  var lyr = L.tileLayer("../static/map_layer/{z}/{x}/{y}.png", {
+    tms: 1,
+    opacity: 0.7,
+    attribution: "",
+    minZoom: 0,
+    maxZoom: 10,
+  });
+
+  // Map
+  var map = L.map("map", {
+    center: [13.72438, 101],
+    zoom: 6,
+    minZoom: 0,
+    maxZoom: 10,
+    layers: [osm, lyr]
+  });
+
+  var basemaps = { OpenStreetMap: osm };
+  var overlaymaps = { "22-06-2022": lyr };
+
+  // Add base layers
+  L.control.layers(basemaps, overlaymaps, { collapsed: false }).addTo(map);
+
+  // Fit to overlay bounds (SW and NE points with (lat, lon))
+  // map.fitBounds([
+  //   [5.4, 106.0],
+  //   [20.6, 97.1],
+  // ]);
+
+  // var map = L.map("map").setView([13.72438, 101], 6);
+
+  // L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  //   maxZoom: 19,
+  //   attribution:
+  //     '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+  // }).addTo(map);
+
+  // ---------------------------------------------------
   // var imageUrl = '../weekly_rain.asc',
   //   imageBounds = [[5.4,20.6], [97.1,106.0]];
   // L.imageOverlay(imageUrl, imageBounds).addTo(map);
@@ -77,17 +138,23 @@
   // APICHON
 
   let marker = null;
-  map.on('click', (event)=> {
-
-    if(marker !== null){
-        map.removeLayer(marker);
+  map.on("click", (event) => {
+    if (marker !== null) {
+      map.removeLayer(marker);
     }
 
-    marker = L.marker([event.latlng.lat , event.latlng.lng]).addTo(map);
+    marker = L.marker([event.latlng.lat, event.latlng.lng]).addTo(map);
 
-    console.log("Latitude: " + (document.getElementById('latitude').value = marker._latlng.lat.toFixed(5)));
-    console.log("Longtitude: " + (document.getElementById('longitude').value = marker._latlng.lng.toFixed(5)));
-    
-})
+    console.log(
+      "Latitude: " +
+        (document.getElementById("latitude").value =
+          marker._latlng.lat.toFixed(5))
+    );
+    console.log(
+      "Longtitude: " +
+        (document.getElementById("longitude").value =
+          marker._latlng.lng.toFixed(5))
+    );
+  });
 </script>
 {% endblock %}
