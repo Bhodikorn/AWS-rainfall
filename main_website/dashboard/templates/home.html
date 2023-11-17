@@ -5,77 +5,21 @@
   style="height: 92.3%; width: 16%; float: left"
 >
   <ul class="list-unstyled ps-0">
-    <li class="mb-1">
-      <button
-        class="btn btn-toggle align-items-center rounded collapsed"
-        data-bs-toggle="collapse"
-        data-bs-target="#home-collapse"
-        aria-expanded="false"
-      >
-        Satellite Source
-      </button>
-      <div class="collapse" id="home-collapse">
-        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-          <li>
-            <a href="#" class="link-dark rounded">Calibration Model v1</a>
-          </li>
-          <li>
-            <a href="#" class="link-dark rounded">Calibration Model v2</a>
-          </li>
-          <li>
-            <a href="#" class="link-dark rounded">Calibration Model v3</a>
-          </li>
-        </ul>
-      </div>
+    <li class="mb-4">
+      <h5>Observation Date</h5>
+      <input type="date" id="ob_date" name="ob_date" value="2023-06-01" />
     </li>
-    <li class="mb-1">
-      <button
-        class="btn btn-toggle align-items-center rounded collapsed"
-        data-bs-toggle="collapse"
-        data-bs-target="#dashboard-collapse"
-        aria-expanded="false"
-      >
-        Observation Date
-      </button>
-      <div class="collapse" id="dashboard-collapse">
-        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-          <input
-            type="text"
-            class="form-control form-control-sm mt-2"
-            placeholder="Date"
-          />
-        </ul>
-      </div>
+    <li class="mb-4">
+      <h5>Selected Location</h5>
+      Latitude:
+      <p class="fw-bold text-success" id="latitude">&emsp;N/A</p>
+      Longitude:
+      <p class="fw-bold text-success" id="longitude">&emsp;N/A</p>
     </li>
-    <li class="mb-1">
-      <button
-        class="btn btn-toggle align-items-center rounded collapsed"
-        data-bs-toggle="collapse"
-        data-bs-target="#location-collapse"
-        aria-expanded="false"
-      >
-        Selected Location
-      </button>
-      <div class="collapse" id="location-collapse">
-        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-          <form action="" class="form">
-            <label for="latitude">Latitude:</label>
-            <input
-              type="text"
-              id="latitude"
-              class="form-control form-control-sm"
-              placeholder="Latitude"
-            />
-            <label for="latitude">Longitude:</label>
-            <input
-              type="text"
-              id="longitude"
-              class="form-control form-control-sm"
-              placeholder="Longitude"
-            />
-          </form>
-        </ul>
-      </div>
+    <li class="mb-4">
+      <h5>Information</h5>
+      Precipitation Value:
+      <p class="fw-bold text-success" id="precip">&emsp;N/A</p>
     </li>
   </ul>
 </div>
@@ -91,7 +35,7 @@
   });
 
   // Overlay layers
-  var lyr = L.tileLayer("../static/map_layer/{z}/{x}/{y}.png", {
+  var lyr = L.tileLayer("../static/CCS_1d20230601/{z}/{x}/{y}.png", {
     tms: 1,
     opacity: 0.7,
     attribution: "",
@@ -105,14 +49,16 @@
     zoom: 6,
     minZoom: 0,
     maxZoom: 10,
-    layers: [osm, lyr]
+    layers: [osm, lyr],
   });
 
   var basemaps = { OpenStreetMap: osm };
-  var overlaymaps = { "22-06-2022": lyr };
+  var overlaymaps = { "2023-06-01": lyr };
 
+  var controlLayer;
   // Add base layers
-  L.control.layers(basemaps, overlaymaps, { collapsed: false }).addTo(map);
+  controlLayer = L.control.layers(basemaps, overlaymaps, { collapsed: false });
+  controlLayer.addTo(map);
 
   // Fit to overlay bounds (SW and NE points with (lat, lon))
   // map.fitBounds([
@@ -137,6 +83,10 @@
   // var geoJsonLayer = L.geoJSON(imageUrl).addTo(map);
   // APICHON
 
+  var selectedDate = document
+    .getElementById("ob_date")
+    .value.replaceAll("-", "");
+
   let marker = null;
   map.on("click", (event) => {
     if (marker !== null) {
@@ -145,16 +95,87 @@
 
     marker = L.marker([event.latlng.lat, event.latlng.lng]).addTo(map);
 
-    console.log(
-      "Latitude: " +
-        (document.getElementById("latitude").value =
-          marker._latlng.lat.toFixed(5))
-    );
-    console.log(
-      "Longtitude: " +
-        (document.getElementById("longitude").value =
-          marker._latlng.lng.toFixed(5))
-    );
+    document.getElementById("latitude").innerHTML =
+      "&emsp;" + marker._latlng.lat.toFixed(5);
+    document.getElementById("longitude").innerHTML =
+      "&emsp;" + marker._latlng.lng.toFixed(5);
+
+    const apiUrl = "http://127.0.0.1:8001/api/getprecip/";
+
+    // Define your query parameters
+    const lat = marker._latlng.lat.toFixed(5);
+    const lon = marker._latlng.lng.toFixed(5);
+
+    selectedDate = document.getElementById("ob_date").value;
+
+    const date = selectedDate.replaceAll("-", ""); // Make sure the date is in a format accepted by your API
+
+    // Construct the full URL with query parameters
+    const urlWithParams = `${apiUrl}?lat=${lat}&lon=${lon}&date=${date}`;
+    
+
+    // Variable to store the precip-value
+    let precipValue;
+
+    // Perform the GET request
+    fetch(urlWithParams)
+      .then((response) => {
+        // Check if the response is ok
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        // Assuming the response has a 'precip-value' field
+        precipValue = data["precip-value"];
+        
+        if (precipValue === "-99") {
+          document.getElementById("precip").innerHTML = "&emsp;" + "N/A";
+        } else {
+          document.getElementById("precip").innerHTML = "&emsp;" + precipValue;
+        }
+        
+      })
+      .catch((error) => {
+        console.error("There was a problem with the fetch operation:", error);
+      });
+  });
+
+  function updateControlPanel(date) {
+    // Assuming overlaymaps is a global variable
+    overlaymaps = { [date]: lyr };
+
+    if (controlLayer) {
+      map.removeControl(controlLayer);
+    }
+
+    // Add the new control layer
+    controlLayer = L.control.layers(basemaps, overlaymaps, {
+      collapsed: false,
+    });
+    controlLayer.addTo(map);
+  }
+
+  function updateLayer(folder_name) {
+    var newUrl = `../static/${folder_name}/{z}/{x}/{y}.png`;
+
+    // Check if lyr is already on the map and remove it
+    if (map.hasLayer(lyr)) {
+      map.removeLayer(lyr);
+    }
+
+    // Update the lyr URL and add it back to the map
+    lyr.setUrl(newUrl);
+    lyr.addTo(map);
+  }
+
+  document.getElementById("ob_date").addEventListener("change", function () {
+    var selectedDate = this.value;
+    var folderName = "CCS_1d" + selectedDate.replaceAll("-", "");
+    updateLayer(folderName);
+    updateControlPanel(selectedDate);
+    // console.log(folderName);
   });
 </script>
 {% endblock %}
