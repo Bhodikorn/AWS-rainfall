@@ -24,6 +24,7 @@
   </ul>
 </div>
 
+<div id="loading" class="loading">Loading...</div>
 <div id="map" style="height: 92.3%; width: 84%"></div>
 
 <script>
@@ -112,7 +113,6 @@
 
     // Construct the full URL with query parameters
     const urlWithParams = `${apiUrl}?lat=${lat}&lon=${lon}&date=${date}`;
-    
 
     // Variable to store the precip-value
     let precipValue;
@@ -129,13 +129,12 @@
       .then((data) => {
         // Assuming the response has a 'precip-value' field
         precipValue = data["precip-value"];
-        
+
         if (precipValue === "-99") {
           document.getElementById("precip").innerHTML = "&emsp;" + "N/A";
         } else {
           document.getElementById("precip").innerHTML = "&emsp;" + precipValue;
         }
-        
       })
       .catch((error) => {
         console.error("There was a problem with the fetch operation:", error);
@@ -170,12 +169,62 @@
     lyr.addTo(map);
   }
 
+  // document.getElementById("ob_date").addEventListener("change", function () {
+  //   var selectedDate = this.value;
+  //   var folderName = "CCS_1d" + selectedDate.replaceAll("-", "");
+  //   updateLayer(folderName);
+  //   updateControlPanel(selectedDate);
+  // });
+
   document.getElementById("ob_date").addEventListener("change", function () {
     var selectedDate = this.value;
     var folderName = "CCS_1d" + selectedDate.replaceAll("-", "");
-    updateLayer(folderName);
-    updateControlPanel(selectedDate);
-    // console.log(folderName);
+
+    var folderCheckUrl =
+      "http://127.0.0.1:8001/api/checkdata/?foldername=" +
+      encodeURIComponent(folderName);
+    // console.log(folderCheckUrl);
+
+    fetch(folderCheckUrl)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data["folder-exist"]) {
+          updateLayer(folderName);
+          updateControlPanel(selectedDate);
+        } else {
+          console.log("Folder not exist.");
+          // Call function to download to download data here
+          // updateLayer(folderName);
+          // updateControlPanel(selectedDate);
+        }
+      })
+      .catch((error) => {
+        console.error("Error checking folder existence:", error);
+      });
   });
+
+  function performGetRequest(date) {
+    var loading = document.getElementById("loading");
+    loading.style.display = "block"; // Show loading circle
+
+    var folderCheckUrl =
+      "http://127.0.0.1:8001/preprocess/load/?date=" +
+      encodeURIComponent(date); // Replace with your actual URL, possibly using selectedDate or folderName
+
+    fetch(urlWithParams)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .catch((error) => {
+        console.error("There was a problem with the fetch operation:", error);
+      })
+      .finally(() => {
+        loading.style.display = "none"; // Hide loading circle
+      });
+  }
+
 </script>
 {% endblock %}
