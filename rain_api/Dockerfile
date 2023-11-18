@@ -1,23 +1,21 @@
-FROM ubuntu:latest
+FROM python:3.11
 
 WORKDIR /rain-api
 
 COPY requirements.txt requirements.txt
 
-COPY . .
+RUN pip install -r requirements.txt
 
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    curl \
-    file \
-    git
-
-RUN apt-get install -y python3 python3-pip
-
+RUN apt-get update && apt-get install -y build-essential curl file git
 RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
 ENV PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH"
 
-RUN pip install -r requirements.txt
+RUN brew install gdal
+
+COPY . .
 
 EXPOSE 8001
-CMD ["python3", "manage.py", "runserver", "0.0.0.0:8001"]
+
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8001"]
+
+# docker run -d -p 8001:8001 -v $(pwd):/rain-api frontend:v1
