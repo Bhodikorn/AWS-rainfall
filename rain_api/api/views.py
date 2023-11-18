@@ -35,3 +35,13 @@ def get_precip(request):
     response["Access-Control-Allow-Origin"] = "*"
 
     return response
+
+def check_data_exist(request):
+    folder_name = request.GET.get('foldername')
+
+    folder_path = Path(settings.BASE_DIR) / 'preprocess' / 'downloaded-data' / 'tile' / folder_name
+
+    response = JsonResponse({'folder-exist': bool(os.path.exists(folder_path) and os.path.isdir(folder_path))})
+    response["Access-Control-Allow-Origin"] = "*"
+
+    return response
