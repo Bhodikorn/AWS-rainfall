@@ -6,9 +6,9 @@ name: CICD
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [ test ]
+    branches: [ test_deploy_labrole ]
   pull_request:
-    branches: [ test ]
+    branches: [ test_deploy_labrole ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -39,7 +39,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ap-southeast-1
+          aws-region: us-east-1
 
       - name: Login to Amazon ECR
         id: login-ecr
