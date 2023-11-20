@@ -1,15 +1,13 @@
-# This is a basic workflow to help you get started with Actions
-
-name: Deploy API
+name: API
 
 # Controls when the workflow will run
 on:
-  workflow_run:
-    workflows: ["CICD"] # The name of the deploy-web.yaml workflow
-    types:
-      - completed
-    branches:
-      - final_test
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches: [ final_test ]
+  pull_request:
+    branches: [ final_test ]
+
 
     
   #[ final_test ]
@@ -63,32 +61,3 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
           cd ..
-
-      - name: Download task definition
-        run: |
-          aws ecs describe-task-definition --task-definition ${{ secrets.ECS_CONTAINER_DEFINITION }} \
-          --query taskDefinition > task-definition.json
-
-      - name: Fill in the new image ID in the Amazon ECS task definition
-        id: task-def
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: task-definition.json
-          container-name: Container-api
-          image: ${{ steps.build-image.outputs.image }}
-
-      - name: Deploy Amazon ECS task definition
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-        with:
-          task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: ${{ secrets.ECS_SERVICE }}
-          cluster: ${{ secrets.ECS_CLUSTER }}
-          wait-for-service-stability: true
-      
-      - name: Update ECS Service
-        id: update-ecs-service
-        run: |
-          aws ecs update-service \
-            --cluster ${{ secrets.ECS_CLUSTER }} \
-            --service ${{ secrets.ECS_SERVICE }} \
-            --force-new-deployment
