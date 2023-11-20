@@ -6,9 +6,9 @@ name: CICD
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [ test_deploy_labrole ]
+    branches: [ final_test ]
   pull_request:
-    branches: [ test_deploy_labrole ]
+    branches: [ final_test ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -40,7 +40,7 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           #aws-region: us-east-1
-          #aws-region: ap-southeast-1
+          aws-region: ap-southeast-1
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -50,7 +50,7 @@ jobs:
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: rainfall-repository
+          ECR_REPOSITORY: rainfall-web
           IMAGE_TAG: latest
         run: |
           echo "$(pwd)"
@@ -71,7 +71,7 @@ jobs:
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: task-definition.json
-          container-name: ${{ secrets.ECS_CONTAINER_NAME }}
+          container-name: Container-web
           image: ${{ steps.build-image.outputs.image }}
 
       - name: Deploy Amazon ECS task definition
