@@ -9,10 +9,23 @@ We use precipitation data obtained from [CHRS Satellite Data Portal](https://chr
 
 ### Data Acquisition
 
-To download the precipitation data from the above source, we call a Python script to download the file via FTP. The downloaded data is the daily precipitation data in a binary (.bin) format.
+To download the precipitation data from the above source, we call a Python script to download the file via FTP. The downloaded data is the daily precipitation data in a binary (*.bin*) format.
 
 ### Data Processing
 
-The .bin file is first converted to GeoTiff (.tif) format of the whole globe. The example of the .tif file is shown below.
+**Step 1:**
+The *.bin* file is first converted to GeoTiff (*.tif*) format of the whole globe. Then, add CRS information to be EPSG4326. The example of the *.tif* file is shown below.
 
-![Globe Tif File](https://imgur.com/a/uXRaFD3)
+![Globe Tif File](https://i.imgur.com/HfGWRMa.png)
+> GeoTiff (.tif) file of the whole globe visualized in QGIS.
+
+**Step 2:**
+Processing the *.tif* file using `gdal` library. The *.tif* file of the whole globe is then cropped to be in Thailand shape using the shape file (*.shp*). The cropped *.tif* file will have 1 band and in black and white.
+
+<img src="https://i.imgur.com/gecjE1e.png" alt="Thailand Tif Filw" width="200" />
+> GeoTiff (.tif) file cropped to the shape of Thailand.
+
+Next, we will convert the .tif file into color using a color table and add the alpha channel for transparency.
+
+<img src="https://i.imgur.com/l8qENdf.png" alt="Thailand Tif Filw" width="200" />
+> GeoTiff (.tif) file of Thailand in color.
