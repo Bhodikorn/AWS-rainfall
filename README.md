@@ -24,7 +24,7 @@ Processing the *.tif* file using `gdal` library. The *.tif* file of the whole gl
 
 Next, we will convert the .tif file into color using a color table and add the alpha channel for transparency.
 
-<img src="https://i.imgur.com/gecjE1e.png" alt="Thailand Tif Filw" width="200" /><img src="https://i.imgur.com/l8qENdf.png" alt="Thailand Tif Filw" width="210" />
+<img src="https://i.imgur.com/QZpIKPy.png" alt="Thailand Tif Filw" width="200" /><img src="https://i.imgur.com/l8qENdf.png" alt="Thailand Tif Filw" width="210" />
 
 > GeoTiff (.tif) file cropped to the shape of Thailand (LEFT).
 > GeoTiff (.tif) file of Thailand in color (RIGHT).
