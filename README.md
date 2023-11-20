@@ -26,5 +26,5 @@ Next, we will convert the .tif file into color using a color table and add the a
 
 <div style="text-align:center"><img src="https://i.imgur.com/QZpIKPy.png" alt="Thailand Tif Filw" width="400" /></div>
 
-> GeoTiff (.tif) file cropped to the shape of Thailand (LEFT).
-> GeoTiff (.tif) file of Thailand in color (RIGHT).
+> GeoTiff (.tif) file cropped to the shape of Thailand in black and white (LEFT).
+> Colored .tif file with alpha channel (RIGHT).
