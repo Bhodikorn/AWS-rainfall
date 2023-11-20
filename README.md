@@ -22,10 +22,9 @@ The *.bin* file is first converted to GeoTiff (*.tif*) format of the whole globe
 **Step 2:**
 Processing the *.tif* file using `gdal` library. The *.tif* file of the whole globe is then cropped to be in Thailand shape using the shape file (*.shp*). The cropped *.tif* file will have 1 band and in black and white.
 
-<img src="https://i.imgur.com/gecjE1e.png" alt="Thailand Tif Filw" width="200" />
-> GeoTiff (.tif) file cropped to the shape of Thailand.
-
 Next, we will convert the .tif file into color using a color table and add the alpha channel for transparency.
 
-<img src="https://i.imgur.com/l8qENdf.png" alt="Thailand Tif Filw" width="200" />
-> GeoTiff (.tif) file of Thailand in color.
+<img src="https://i.imgur.com/gecjE1e.png" alt="Thailand Tif Filw" width="200" /><img src="https://i.imgur.com/l8qENdf.png" alt="Thailand Tif Filw" width="210" />
+
+> GeoTiff (.tif) file cropped to the shape of Thailand (LEFT).
+> GeoTiff (.tif) file of Thailand in color (RIGHT).
