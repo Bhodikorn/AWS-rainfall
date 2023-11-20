@@ -1,14 +1,19 @@
-FROM python:3
- 
-WORKDIR /main_website
- 
+FROM ubuntu:22.04
+
+WORKDIR /main-website
+
 COPY requirements.txt requirements.txt
 
-RUN pip install -r requirements.txt
- 
-COPY . .
- 
-EXPOSE 8000
-CMD ["python3", "manage.py", "runserver", "0.0.0.0:8000"]
+RUN apt-get update
 
-# docker run --name 'frontend' -d -p 8000:8000 -v $(pwd):/main_website frontend:v1
+RUN apt install python3.10 -y
+
+RUN apt install python3-pip -y
+
+RUN pip3 install -r requirements.txt
+
+COPY . .
+
+EXPOSE 8000
+
+CMD ["python3", "manage.py", "runserver", "0.0.0.0:8000"]

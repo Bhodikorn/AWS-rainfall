@@ -7,7 +7,15 @@
   <ul class="list-unstyled ps-0">
     <li class="mb-4">
       <h5>Observation Date</h5>
+      <div style="font-size: 9px">Note: If the date you selected is not already downloaded in our data storage, the system will download and process the file on demand which may take a few seconds [more than 30 seconds]</div>
+      <p></p>
       <input type="date" id="ob_date" name="ob_date" value="2023-06-01" />
+      
+      <p class="loading-text"></p>
+      <div id="loading" class="loading"></div>
+      <div class="loading-text">Loading...</div>
+      <div class="loading-text">This may take few seconds.</div>
+      
     </li>
     <li class="mb-4">
       <h5>Selected Location</h5>
@@ -21,13 +29,18 @@
       Precipitation Value:
       <p class="fw-bold text-success" id="precip">&emsp;N/A</p>
     </li>
+    <!-- <li style="bottom: 20px; width: 100%;">
+      <p>Your custom footer text here.</p>
+    </li> -->
   </ul>
 </div>
 
-<div id="loading" class="loading">Loading...</div>
 <div id="map" style="height: 92.3%; width: 84%"></div>
 
 <script>
+  // var frontendIP = "34.207.155.164";
+  var backendIP = "34.207.155.164";
+
   var osm = L.tileLayer("http://{s}.tile.osm.org/{z}/{x}/{y}.png", {
     attribution:
       '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
@@ -36,7 +49,7 @@
   });
 
   // Overlay layers
-  var lyr = L.tileLayer("../static/CCS_1d20230601/{z}/{x}/{y}.png", {
+  var lyr = L.tileLayer("https://persiann-tile-files.s3.amazonaws.com/CCS_1d20230601/{z}/{x}/{y}.png", {
     tms: 1,
     opacity: 0.7,
     attribution: "",
@@ -101,7 +114,7 @@
     document.getElementById("longitude").innerHTML =
       "&emsp;" + marker._latlng.lng.toFixed(5);
 
-    const apiUrl = "http://127.0.0.1:8001/api/getprecip/";
+    const apiUrl = "http://" + backendIP + ":8001/api/getprecip/";
 
     // Define your query parameters
     const lat = marker._latlng.lat.toFixed(5);
@@ -157,7 +170,8 @@
   }
 
   function updateLayer(folder_name) {
-    var newUrl = `../static/${folder_name}/{z}/{x}/{y}.png`;
+    
+    var newUrl = `https://persiann-tile-files.s3.amazonaws.com/${folder_name}/{z}/{x}/{y}.png`;
 
     // Check if lyr is already on the map and remove it
     if (map.hasLayer(lyr)) {
@@ -181,21 +195,40 @@
     var folderName = "CCS_1d" + selectedDate.replaceAll("-", "");
 
     var folderCheckUrl =
-      "http://127.0.0.1:8001/api/checkdata/?foldername=" +
+      "http://" + backendIP + ":8001/api/checkdata/?foldername=" +
       encodeURIComponent(folderName);
     // console.log(folderCheckUrl);
 
     fetch(folderCheckUrl)
       .then((response) => response.json())
       .then((data) => {
+        // console.log(data["folder-exist"]);
         if (data["folder-exist"]) {
+          // console.log("Folder exist.");
+          if (marker !== null) {
+            map.removeLayer(marker);
+          }
+          document.getElementById("precip").innerHTML = "&emsp;" + "N/A";
+          document.getElementById("latitude").innerHTML = "&emsp;" + "N/A";
+          document.getElementById("longitude").innerHTML = "&emsp;" + "N/A";
           updateLayer(folderName);
           updateControlPanel(selectedDate);
         } else {
-          console.log("Folder not exist.");
-          // Call function to download to download data here
-          // updateLayer(folderName);
-          // updateControlPanel(selectedDate);
+          // console.log("Folder not exist.");
+          document.getElementById("ob_date").disabled = true;
+          return performGetRequest(selectedDate.replaceAll("-", "")).then(() => {
+            // These functions are called after performGetRequest is completed
+            if (marker !== null) {
+              map.removeLayer(marker);
+            }
+            document.getElementById("precip").innerHTML = "&emsp;" + "N/A";
+            document.getElementById("latitude").innerHTML = "&emsp;" + "N/A";
+            document.getElementById("longitude").innerHTML = "&emsp;" + "N/A";
+            updateLayer(folderName);
+            updateControlPanel(selectedDate);
+            document.getElementById("ob_date").disabled = false;
+            // console.log("DONE");
+          });
         }
       })
       .catch((error) => {
@@ -204,27 +237,40 @@
   });
 
   function performGetRequest(date) {
-    var loading = document.getElementById("loading");
-    loading.style.display = "block"; // Show loading circle
-
-    var folderCheckUrl =
-      "http://127.0.0.1:8001/preprocess/load/?date=" +
-      encodeURIComponent(date); // Replace with your actual URL, possibly using selectedDate or folderName
-
-    fetch(urlWithParams)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+    return new Promise((resolve, reject) => {
+        var loading = document.getElementById("loading");
+        var loadingtext = document.getElementsByClassName("loading-text");
+        loading.style.display = "block"; // Show loading circle
+        for (var i = 0; i < loadingtext.length; i++) {
+            loadingtext[i].style.display = "block";
         }
-        return response.json();
-      })
-      .catch((error) => {
-        console.error("There was a problem with the fetch operation:", error);
-      })
-      .finally(() => {
-        loading.style.display = "none"; // Hide loading circle
-      });
-  }
+
+        let formattedDate = date.replace(/(\d{4})(\d{2})(\d{2})/, '$3-$2-$1');
+
+        var folderCheckUrl = "http://" + backendIP + ":8001/preprocess/load/?date=" + encodeURIComponent(formattedDate);
+
+        fetch(folderCheckUrl)
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                resolve(data); // Resolve the promise with the data
+            })
+            .catch((error) => {
+                console.error("There was a problem with the fetch operation:", error);
+                reject(error); // Reject the promise with the error
+            })
+            .finally(() => {
+                loading.style.display = "none"; // Hide loading circle
+                for (var i = 0; i < loadingtext.length; i++) {
+                    loadingtext[i].style.display = "none";
+                }
+            });
+    });
+}
 
 </script>
 {% endblock %}
