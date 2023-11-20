@@ -14,6 +14,8 @@
 #     return response
 
 # Import necessary modules
+from django.http import JsonResponse
+import json
 from subprocess import run
 from django.http import HttpResponse
 
@@ -27,6 +29,16 @@ def load(request):
 
     # Handling the output
     if result.returncode == 0:
-        return HttpResponse(f"Script executed successfully: {result.stdout}")
+        response_data = {
+            "status": "success",
+            "message": "Script executed successfully",
+            "output": result.stdout
+        }
     else:
-        return HttpResponse(f"Error in script execution: {result.stderr}")
+        response_data = {
+            "status": "error",
+            "message": "Error in script execution",
+            "error_details": result.stderr
+        }
+
+    return JsonResponse(response_data)

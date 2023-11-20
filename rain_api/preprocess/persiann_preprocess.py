@@ -194,3 +194,55 @@ def move_path(source, destination):
 
 move_path(cropped_file_name, "./tif")
 move_path(cropped_file_name[:-4], "./tile")
+
+tile_folder_name = cropped_file_name[:-4]
+
+import boto3
+import os
+from concurrent.futures import ThreadPoolExecutor
+
+def upload_file(s3_client, file_path, bucket_name, base_path):
+    """Upload a file to an S3 bucket"""
+    # Generate the object name based on file's relative path, including base directory
+    object_name = os.path.relpath(file_path, os.path.dirname(base_path))
+    try:
+        s3_client.upload_file(file_path, bucket_name, object_name)
+        # print(f"{file_path} uploaded successfully as {object_name}")
+    except Exception as e:
+        print(f"Error uploading {file_path}: {e}")
+
+tile_bucket = 'persiann-tile-files'  # replace with your bucket name
+base_path = "./tile/" + tile_folder_name  # directory where your files are located
+
+# Create an S3 client
+s3_client = boto3.client('s3')
+
+# Collect all file paths
+files_to_upload = []
+for dirpath, dirnames, filenames in os.walk(base_path):
+    for f in filenames:
+        files_to_upload.append(os.path.join(dirpath, f))
+
+# Use ThreadPoolExecutor to upload files in parallel
+with ThreadPoolExecutor(max_workers=10) as executor:
+    for file_path in files_to_upload:
+        executor.submit(upload_file, s3_client, file_path, tile_bucket, base_path)
+
+def upload_single_file(s3_client, file_path, bucket_name, object_name=None):
+    """Upload a single file to an S3 bucket"""
+    if object_name is None:
+        object_name = os.path.basename(file_path)
+    try:
+        s3_client.upload_file(file_path, bucket_name, object_name)
+        print(f"{file_path} uploaded successfully as {object_name}")
+    except Exception as e:
+        print(f"Error uploading {file_path}: {e}")
+
+tif_bucket = 'persiann-tif-files'  # replace with your bucket name
+tif_file_path = './tif/' + cropped_file_name  # path to the file you want to upload
+
+# Upload the file
+upload_single_file(s3_client, tif_file_path, tif_bucket)
+
+delete_path("./tif/" + cropped_file_name)
+delete_path("./tile/" + tile_folder_name)
