@@ -58,7 +58,7 @@ jobs:
         run: |
           echo "$(pwd)"
           echo "$(ls -l)"
-          cd ./main_website
+          cd ./rain_api
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
