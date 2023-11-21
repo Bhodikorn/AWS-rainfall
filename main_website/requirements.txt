@@ -4,3 +4,4 @@ packaging==23.2
 sqlparse==0.4.4
 typing-extensions==4.8.0
 Django==4.2.7
+django-cors-headers==4.3.1
