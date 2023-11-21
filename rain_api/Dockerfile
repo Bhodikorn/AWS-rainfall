@@ -2,7 +2,7 @@ FROM ubuntu:22.04
 
 WORKDIR /rain-api
 
-COPY requirements.txt requirements.txt
+COPY . .
 
 RUN apt-get update
 
@@ -13,8 +13,6 @@ RUN apt install python3-pip -y
 RUN apt-get install -y gdal-bin python3-gdal
 
 RUN pip3 install -r requirements.txt
-
-COPY . .
 
 EXPOSE 8001
 
