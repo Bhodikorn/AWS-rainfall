@@ -4,9 +4,7 @@
 This is a project for DES424 Cloud-based Application Development.
 
 ### Precipitation Data
-
 ------------
-
 
 We use precipitation data obtained from [CHRS Satellite Data Portal](https://chrsdata.eng.uci.edu "PERSIANN"). The data we use is the PERSIANN-CCS data which is a real-time global high resolution (0.04° x 0.04° or 4km x 4km).
 
