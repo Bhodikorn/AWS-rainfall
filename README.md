@@ -32,8 +32,9 @@ Next, we will convert the .tif file into color using a color table and add the a
 **Step 3:**
 Convert the *.tif* file to tiles using `gdal2tiles`. All tile files is contained within a folder and consist of many *.png* files with different zoom level. These tiles will be used for displaying layer over the world map in Leaflet.
 
-<div style="text-align:center"><img src="https://i.imgur.com/hPYHvMl.png" alt="Tile File" width="400" /></div>
+<div style="text-align:center"><img src="https://i.imgur.com/hPYHvMl.png" alt="Tile File" width="500" /></div>
 <div></div>
+
 > Tile files generated from gdal2tiles.
 
 **Step 4:**
