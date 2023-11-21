@@ -75,9 +75,25 @@ To test the project in a local machine. Follow the following steps.
 Clone git hub repository in to your local machine. Make sure you have Docker installed in your machine.
 
 **Step 2:**
+Change the IP of the website backend in the file `./main_website/dashboard/templates/home.html` to your host machine ip. For local machine, you may use `localhost`. To set the backend IP addreass you can use these commands.
+- `sed -i '' '42s/.*/var backendIP = "X.X.X.X";/' home.html` or
+
+- `sed -i '' '42s/.*/var backendIP = "localhost";/' home.html` for localhost
+
+**Step 3:**
 Build 2 docker images from the `Dockerfile` located in the following paths.
 - `./main_website` using this command. `docker build -t main-website .`
 
 - `./rain-api` using this command. `docker build -t rain-api .`
 
-**Step 3:**
+**Step 4:**
+Run 2 containers from the 2 created images using the following commands.
+- `docker run`
+
+- `docker run`
+
+**Step 5:**
+Test the web application by going to the hosting IP.
+- `X.X.X.X:8000/dashboard` or
+
+- `localhost:8000/dashboard` for localhost
