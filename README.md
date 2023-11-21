@@ -47,7 +47,7 @@ The web application is developed in Django framework. In this project, it consis
 contains the HTML, CSS, JS for the user interface of the web application. It will also call the APIs in the backend side as well.
 
 	- `/dashboard` 
-	The dashboard display the precipitation visualization over Thailand on selected day.
+	The dashboard displaying the precipitation visualization over Thailand on selected day.
 
 - **Backend**: 
 contains the Python script for handling all APIs call from the frontend. Here are the list of APIs.
@@ -66,3 +66,18 @@ contains the Python script for handling all APIs call from the frontend. Here ar
 	Load data of the specific date and perform data processing steps mentioned above and store it in S3 buckets.
 	*Parameters*: date (dd-mm-yyyy format eg. June 1 = 01-06-2023)
 	*Return value:* Success or Fail
+
+### How to setup the project
+------------
+To test the project in a local machine. Follow the following steps.
+
+**Step 1:**
+Clone git hub repository in to your local machine. Make sure you have Docker installed in your machine.
+
+**Step 2:**
+Build 2 docker images from the `Dockerfile` located in the following paths.
+- `./main_website` using this command. `docker build -t main-website .`
+
+- `./rain-api` using this command. `docker build -t rain-api .`
+
+**Step 3:**
