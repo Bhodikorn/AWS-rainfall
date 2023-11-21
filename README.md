@@ -45,6 +45,10 @@ Upload both *.tif* and tile files to Amazon Simple Storage Service (S3) buckets.
 The web application is developed in Django framework. In this project, it consists of 2 Django projects for frontend and backend. Each Django project is deployed in a container and contains all dependecies required to be able to handle the processes.
 - **Frontend**
 contains the HTML, CSS, JS for the user interface of the web application. It will also call the APIs in the backend side as well.
+
+	- `/dashboard` 
+	The dashboard display the precipitation visualization over Thailand on selected day.
+
 - **Backend**: 
 contains the Python script for handling all APIs call from the frontend. Here are the list of APIs.
 
