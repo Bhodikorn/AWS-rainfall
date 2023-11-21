@@ -2,7 +2,7 @@ FROM ubuntu:22.04
 
 WORKDIR /main-website
 
-COPY requirements.txt requirements.txt
+COPY . .
 
 RUN apt-get update
 
@@ -11,8 +11,6 @@ RUN apt install python3.10 -y
 RUN apt install python3-pip -y
 
 RUN pip3 install -r requirements.txt
-
-COPY . .
 
 EXPOSE 8000
 
