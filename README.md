@@ -49,7 +49,7 @@ contains the HTML, CSS, JS for the user interface of the web application. It wil
 contains the Python script for handling all APIs call from the frontend. Here are the list of APIs.
 
 	- `/api/checkdata` 
-	Check if the data is already existed in S3 bucket or not.
+	Check if the data already exists in S3 bucket or not.
 	*Parameters*: foldername (eg. CCS_1d20230601)
 	*Return type:* True or False
 	
