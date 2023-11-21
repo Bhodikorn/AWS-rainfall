@@ -83,9 +83,9 @@ Build 2 docker images from the `Dockerfile` located in the following paths.
 
 **Step 4:**
 Run 2 containers from the 2 created images using the following commands.
-- `docker run`
+- `docker run --name 'frontend' -d -p 8000:8000 -v $(pwd):/main-website main-website:latest`
 
-- `docker run`
+- `docker run --name 'backend' -d -p 8001:8001 -v $(pwd):/rain-api rain-api:latest`
 
 **Step 5:**
 Test the web application by going to the hosting IP.
