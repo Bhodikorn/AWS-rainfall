@@ -3,16 +3,13 @@
 
 This is a project for DES424 Cloud-based Application Development.
 
-### Precipitation Data
-------------
+## Precipitation Data
 We use precipitation data obtained from [CHRS Satellite Data Portal](https://chrsdata.eng.uci.edu "PERSIANN"). The data we use is the PERSIANN-CCS data which is a real-time global high resolution (0.04° x 0.04° or 4km x 4km).
 
-### Data Acquisition
-------------
+## Data Acquisition
 To download the precipitation data from the above source, we call a Python script to download the file via FTP. The downloaded data is the daily precipitation data in a binary (*.bin*) format.
 
-### Data Processing
-------------
+## Data Processing
 **Step 1:**
 The *.bin* file is first converted to GeoTiff (*.tif*) format of the whole globe. Then, add CRS information to be EPSG4326. The example of the *.tif* file is shown below.
 
@@ -40,8 +37,7 @@ Convert the *.tif* file to tiles using `gdal2tiles`. All tile files is contained
 **Step 4:**
 Upload both *.tif* and tile files to Amazon Simple Storage Service (S3) buckets. There will be 2 buckets: one for *.tif* files and the other one for tile files.
 
-### Web Application Framework
-------------
+## Web Application Framework
 The web application is developed in Django framework. In this project, it consists of 2 Django projects for frontend and backend. Each Django project is deployed in a container and contains all dependecies required to be able to handle the processes.
 - **Frontend**
 contains the HTML, CSS, JS for the user interface of the web application. It will also call the APIs in the backend side as well.
@@ -67,8 +63,7 @@ contains the Python script for handling all APIs call from the frontend. Here ar
 	*Parameters*: date (dd-mm-yyyy format eg. June 1 = 01-06-2023)
 	*Return value:* Success or Fail
 
-### How to setup the project
-------------
+## How to setup the project
 To test the project in a local machine. Follow the following steps.
 
 **Step 1:**
