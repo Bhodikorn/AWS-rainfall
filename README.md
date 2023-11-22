@@ -1,4 +1,3 @@
-
 # Thailand's Precipitation Dashboard
 
 This is a project for DES424 Cloud-based Application Development.
